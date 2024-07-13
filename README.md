@@ -1,6 +1,7 @@
 # Usage
 ![br](https://github.com/user-attachments/assets/c368f8d9-4c71-4f79-8098-37417d034d40)
-Once you've set a binding for gpencil.draw_switcher, you can hold it whenever you're using your standard gpencil.draw bind to switch to whatever brush/
+Once you've set a binding for gpencil.draw_switcher, you can hold it whenever you're using your standard gpencil.draw bind to switch to whatever brush/material you'd like.
+You can also add a TriggerBrush to only trigger the switching if you're on that brush name. Otherwise, it will use the draw mode specified in the keymap, default: Eraser.
 # Notes (mostly blender faults)
 - Setting the keybind to an 'eraser key' like shown below probably won't work.
 
