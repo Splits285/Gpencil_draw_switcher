@@ -1,17 +1,15 @@
 bl_info = {
-    "name": "Grease Pencil material/brush bind-toggle-switcher (erase-switcher)",
-    "description": "Switch to a material and/or brush while a special gpencil.draw_switcher is held.\nIdeal for using holdout materials to erase strokes instead of erasing them by their vertices",
-    "author": "Splits285",
-    "version": (1, 0, 0),
-    "blender": (3, 0, 0),
-    "location": "Preferences > keymap > Grease Pencil. Add an entry for gpencil.draw_switcher",
-    "warning": "This is unlikely to work well if you bind the eraser input directly, as blender never seems to ever give that to the API. If you can't bind the eraser button without using the dropdown menus, you should remap the eraser button for blender.exe in your drawing software and change your bindings to that.",
-    "doc_url": "https://github.com/Splits285/Gpencil_draw_switcher",
-    "tracker_url": "https://github.com/Splits285/Gpencil_draw_switcher/issues",
-    "category": "Object",
-    "support": "Community",
+"name": "Grease Pencil material-brush bind-toggle-switcher (erase-switcher)",
+"description": "Switch to a material and/or brush while a special gpencil.draw_switcher is held. Ideal for using holdout materials to erase strokes instead of erasing them by their vertices",
+"author": "Splits285",
+"version": (0, 0, 5),
+"blender": (2, 8, 0),
+"location": "Preferences > keymap > Grease Pencil. Add an entry for gpencil.draw_switcher",
+"warning": "Eraser binds probably won't work, unless you can bind the eraser with an actual button-hit (not selecting it.) Bind the eraser on your pen to a keystroke instead.",
+"doc_url": "https://github.com/Splits285/Gpencil_draw_switcher",
+"tracker_url": "https://github.com/Splits285/Gpencil_draw_switcher/issues/",
+"category": "User Interface",
 }
-
 import bpy
 
 class GPencilDrawSwitcherOperator(bpy.types.Operator):
@@ -34,7 +32,7 @@ class GPencilDrawSwitcherOperator(bpy.types.Operator):
             ('DRAW_STRAIGHT', "Draw Straight Lines", "Who even uses this option?"),
             ('ERASER', "Eraser", "Erase Grease Pencil strokes.")
         ],
-        default='DRAW',
+        default='ERASER',
     )
     #---------------------------------------------------------------
     #access with self.CDO_WaitForInput
@@ -45,10 +43,10 @@ class GPencilDrawSwitcherOperator(bpy.types.Operator):
         update=lambda self, context: update_global_variable(self)
     )
     #-------------------------------------------------------------
-    #access with self.CDO_BrushName
-    CDO_BrushName: bpy.props.StringProperty(
+    #access with self.CDO_TriggerBrushName
+    CDO_TriggerBrushName: bpy.props.StringProperty(
         name="TriggerBrush", #goes next to textbox ui element in the keymap binding properties in keymap preferences.
-        description="Brush name which, if in use, will enable the brush/material-switching. \nIf no brush is named here brush/material-switching will happen on every brush",
+        description="Brush name which, if in use, will enable the brush/material-switcher. \nIf no brush is named here brush/material-switching will happen on every brush",
         default='',
     )
     #-------------------------------------------------------------
@@ -62,7 +60,7 @@ class GPencilDrawSwitcherOperator(bpy.types.Operator):
     #access with self.CDO_MaterialName
     CDO_MaterialName: bpy.props.StringProperty(
         name="Switch To Material", #goes next to textbox ui element in the keymap binding properties in keymap preferences.
-        description="Material to switch to while held. Does nothing if unset.", 
+        description="Material to switch to while held. Does nothing if unset. Note if we find and switch to the matching material Draw mode will be forced on, ignoring your setting.\n(What's the point of setting a material when you're just gonna erase?)", 
         default='', #no sample text
     )
     #---------------------------------------------------------------
@@ -118,70 +116,77 @@ class GPencilDrawSwitcherOperator(bpy.types.Operator):
             #TRIGGERSTATE should usually be down. You're mad if you purposely bind this operator to be on release.
             #Don't blame me especially if you did something worse, like bind it to "Any".
 
-            CheckBrush = self.CDO_BrushName
+            CheckBrush = self.CDO_TriggerBrushName
+            TriggerBrushActive = 0
             SetMode = self.CDO_Mode #Base state set by the user.
 
-            if CheckBrush == "":
-                #print("no specified trigger brush, so we're switching materials anyway.")
+            if CheckBrush == "" or bpy.context.tool_settings.gpencil_paint.brush.name == CheckBrush:
+                #print("no specified trigger brush, OR WE'RE ON IT.")
+                TriggerBrushActive = 1
                 pass
 
             elif bpy.context.tool_settings.gpencil_paint.brush.name != CheckBrush:
                 #We aren't on the trigger brush. The material/brush-switching Trigger brush.
+                #TriggerBrushActive is 0 in this condition.
                 #print(bpy.context.tool_settings.gpencil_paint.brush, CheckBrush)
-                #print("Active brush doesn't trigger us.")
-                SetMode = self.CDO_Mode
+                #print("Active brush doesn't trigger gpencil switchur.")
+                #print(SetMode," NO CAP----")
+                #print(TriggerBrushActive)
+                pass
 
 #-----------If checkbrush is specified and active... do switchbrush checks-----------------------
-            else:
-                if self.CDO_SwitchBrush != "":
-                    bruname = self.CDO_SwitchBrush
-                    #Does the brush exist?
-                    try:
-                        bpy.data.brushes[bruname]
-                    except KeyError as e:
-                        print("Error: Brush not found, user-set state save us!!!!!!!!!")
-                       #Handle this and fallback to the user-set mode
-                        SetMode = self.CDO_Mode
-                    else:
-                        print(bpy.context.tool_settings.gpencil_paint.brush.name," is the active brush. gonna try to store it")
-                        SetMode = "DRAW"
-                        #context.scene.stored_brush_name does not exist normally and is declared in the register() function at the bottom.
-                        global STORED_BRUSH_NAME
-                        STORED_BRUSH_NAME = bpy.context.tool_settings.gpencil_paint.brush.name
+            bruname = self.CDO_SwitchBrush
+            #if brush is specified.... confirm it exists or switch the mode back.
+            if bruname != "":
+                #print("Switchbrush's name isn't empty.")
+                #Does the brush exist?
+                try:
+                    bpy.data.brushes[bruname]
+                except KeyError as e:
+                    #print("Error: Brush not found, user-set state save us!!!!!!!!!")
+                    #Handle this, we'll just stay in user-set-mode.
+                    pass
+
+            if TriggerBrushActive == 1:
+                #print ("No Triggerbrush OR we're on it. The check passed, we should set draw mode and try to change stuff")
+#~~~~~~~
+                #print(bpy.context.tool_settings.gpencil_paint.brush.name," is the active brush. gonna try to store it")
+                #context.scene.stored_brush_name does not exist normally and is declared in the register() function at the bottom.
+                if bruname != "":
+                    global STORED_BRUSH_NAME
+                    STORED_BRUSH_NAME = bpy.context.tool_settings.gpencil_paint.brush.name
                         
-                        #print("Stored: ",STORED_BRUSH_NAME,"")
-                        #print("we got the desired switchbrush @ ", bpy.data.brushes[bruname],", and we're gonna try switching to it.")
-                   
-                        #switch to it#
-                        context.tool_settings.gpencil_paint.brush = bpy.data.brushes[bruname]
-                    
+                    #print("Stored: ",STORED_BRUSH_NAME,"")
+                    #print("we got the desired switchbrush @ ", bpy.data.brushes[bruname],", and we're gonna try switching to it.")
+                    #print("trigger brush is specified and we're trying to switch to it @L161")
+                    #switch to it#
+                    context.tool_settings.gpencil_paint.brush = bpy.data.brushes[bruname]    
 #-----------------------------------------------------------------------------
-            #Get the index of a material named "Masq"
-            #By looping over the materials in the scene context.    
-            #The reason we set the index instead of setting it by name is because
-            #Setting it by name changes the name field of the active brush
-            #instead of switching the active brush to the one named by the user.              
-            #context.scene.stored_material_index does not exist normally and is created in the register() function at the bottom.
-            context.scene.stored_material_index = context.active_object.active_material_index
 
-            for i, mat in enumerate(context.active_object.data.materials):
-                if mat.name == self.CDO_MaterialName:
-                    context.active_object.active_material_index = i
-                    SetMode = "DRAW"
-                    break
-            else:
-                #print("NOMATERIALFOUND_______________")
-                #print(f"No material named {self.CDO_MaterialName} found")
-                #No material found. Guess the user doesn't care or didn't make one. Fall back to their preferred state!
-                SetMode = self.CDO_Mode
+                #context.scene.stored_material_index does not exist normally and is created in the register() function at the bottom.
+                context.scene.stored_material_index = context.active_object.active_material_index
+                #Get the index of the self.CDO_MaterialName material by looping over the materials in the scene context. The reason we set the index instead of setting it by name is because setting it by name changes the name field of the active brush instead of switching the active brush to the one named by the user. 
+                if self.CDO_MaterialName != "":
+                    for i, mat in enumerate(context.active_object.data.materials):
+                        #print("Enumerating materials @ 187")
+                        if mat.name == self.CDO_MaterialName:
+                            #switch to it!
+                            #print("switching to draw mode")
+                            SetMode = "DRAW"
+                            #print("switching to the material, step one.")
+                            context.active_object.active_material_index = i
+                            break
 
+                else: ##if TriggerBrushActive == 0 and materialname is also unspecified. Brush switching is irrelephant here.:
+                    pass
+                    
         else:
             #print("Active object is not a Grease Pencil")
             pass
 
         #print("==============================")
         #print("Mode",self.CDO_Mode)
-        #print("BrushName",self.CDO_BrushName)
+        #print("TriggerBrushName",self.CDO_TriggerBrushName)
         #print("SwitchBrushName",self.CDO_SwitchBrush)
         #print("MaterialName",self.CDO_MaterialName)
         #print("WaitForInput",self.CDO_WaitForInput)
@@ -191,8 +196,8 @@ class GPencilDrawSwitcherOperator(bpy.types.Operator):
         #print("==============================")
 
         #Call the damn draw function. Finally.
-        print("Where's the sssmode?!")
-        print(self.CDO_DisableStabilizer)
+        #Seriously, Why, blender!!!!! Why don't you have any information about gpencil.draw ending?! it's not an instant function, strokes can go on for minutes!
+
         bpy.ops.gpencil.draw(
             'INVOKE_DEFAULT',
             mode=              SetMode,
@@ -203,7 +208,6 @@ class GPencilDrawSwitcherOperator(bpy.types.Operator):
             disable_fill=self.CDO_DisableFill,
             guide_last_angle=self.CDO_GuideLastAngle,
         )
-        #Seriously, Why, blender!!!!! Why don't you have any
         
         #By default gpencil.draw waits for mouse input to start going which is really bad.
         #It's only helpful if you somehow have a convenient way to invoke the operator
@@ -222,14 +226,14 @@ class GPencilDrawSwitcherOperator(bpy.types.Operator):
             #print(TRIGGERKEY, "opposite event.value achieved (raised probably)")
             
             #restore the material
-            if context.active_object.active_material_index != context.scene.STORED_MATERIAL_INDEX:
-                context.active_object.active_material_index = context.scene.STORED_MATERIAL_INDEX
-            print("restored material#: ",context.scene.STORED_MATERIAL_INDEX)
+            if context.active_object.active_material_index != context.scene.stored_material_index:
+                context.active_object.active_material_index = context.scene.stored_material_index
+            #print("restored material#: ",context.scene.stored_material_index)
             
             #restore the brush name
             if STORED_BRUSH_NAME is not None:
-                print("stored_brush_name is not none, its ",STORED_BRUSH_NAME)
-                print("Restoring!")
+                #print("stored_brush_name is not none, its ",STORED_BRUSH_NAME)
+                #print("Restoring!")
                 context.tool_settings.gpencil_paint.brush = bpy.data.brushes.get(STORED_BRUSH_NAME)
             return {'FINISHED'}
         return {'PASS_THROUGH'}
@@ -237,13 +241,13 @@ class GPencilDrawSwitcherOperator(bpy.types.Operator):
 def register():
     bpy.utils.register_class(GPencilDrawSwitcherOperator)
 
-    bpy.types.Scene.STORED_MATERIAL_INDEX = bpy.props.IntProperty()
+    bpy.types.Scene.stored_material_index = bpy.props.IntProperty()
     #https://docs.blender.org/api/current/bpy.props.html#bpy.props.PointerProperty
     #https://docs.blender.org/api/current/bpy.types.Brush.html#bpy.types.Brush
 def unregister():
     bpy.utils.unregister_class(GPencilDrawSwitcherOperator)
 
-    del bpy.types.Scene.STORED_MATERIAL_INDEX
+    del bpy.types.Scene.stored_material_index
 
 if __name__ == "__main__":
     register()
