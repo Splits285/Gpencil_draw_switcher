@@ -2,7 +2,7 @@ bl_info = {
     "name": "Grease Pencil material/brush bind-toggle-switcher (erase-switcher)",
     "description": "Switch to a material and/or brush while a special gpencil.draw_switcher is held.\nIdeal for using holdout materials to erase strokes instead of erasing them by their vertices",
     "author": "Splits285",
-    "version": (1, 9, 2),
+    "version": (1, 0, 0),
     "blender": (3, 0, 0),
     "location": "Preferences > keymap > Grease Pencil. Add an entry for gpencil.draw_switcher",
     "warning": "This is unlikely to work well if you bind the eraser input directly, as blender never seems to ever give that to the API. If you can't bind the eraser button without using the dropdown menus, you should remap the eraser button for blender.exe in your drawing software and change your bindings to that.",
