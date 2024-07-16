@@ -1,6 +1,7 @@
-# Usage
-![br](https://github.com/user-attachments/assets/c368f8d9-4c71-4f79-8098-37417d034d40)
-Once you've set a binding for gpencil.draw_switcher, you can hold it whenever you're using your standard gpencil.draw bind to switch to whatever brush/material you'd like.
+# Features
+![Blender_Render16-07-2024_06 49 40AM_1384x279x](https://github.com/user-attachments/assets/71c71687-2ea3-4c54-8df1-9b26de5f9d9a)
+Once you've set a binding for gpencil.draw_switcher, you can hold it (or press once and release if you enable 'toggle') whenever you're using your standard gpencil.draw bind to switch to whatever brush/material you'd like.
+
 You can also add a TriggerBrush to only trigger the switching if you're on that brush name. Otherwise, it will use the draw mode specified in the keymap, default: Eraser.
 # Notes (mostly blender faults)
 - Setting the keybind to an 'eraser key' like shown below probably won't work.
@@ -15,5 +16,12 @@ You can also add a TriggerBrush to only trigger the switching if you're on that 
 
 - If you clear the entry on any field with the X button it may linger and continue switching/acting on trigger as if it was still there. Just manually specify an empty entry (the text box won't be grayed out if you did this right) and that should fix it. You can X it again after if you really want to, it stays fixed after one attempt.
 
-   ![image](https://github.com/user-attachments/assets/e67f4939-a3f8-4923-8c5c-bd3ee40c404b)
+   ![image](https://github.com/user-attachments/assets/b340d50a-f74a-4ffb-9b0d-50e193c1e665) Look for INK Pen. (Case-sensitive)
+   ![image](https://github.com/user-attachments/assets/b1c583a3-699d-40f8-9d2e-81e268ac3b7e) Still looking for it, because X was used to clear it. Blender moment.
+   ![image](https://github.com/user-attachments/assets/aeb1d16d-0d87-42b2-836e-c78e545d7971) Looking for " ". Not good enough.
+   ![image](https://github.com/user-attachments/assets/8be09ee7-c562-485d-80d4-b4f42330f3b9) Won't do any switching, truly empty. The default. Finally.
 
+
+# Installation
+Install by going to Preferences > Addons > Install. Install the .zip file directly, you can't install it extracted.
+You can delete the original .zip after installing it, blender makes its own copy in its files somewhere. You'll have to redownload to install it again though.
