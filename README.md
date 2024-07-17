@@ -4,6 +4,11 @@ Once you've set a binding for gpencil.draw_switcher, you can hold it (or press o
 
 You can also add a TriggerBrush to only trigger the switching if you're on that brush name. Otherwise, it will use the draw mode specified in the keymap, default: Eraser.
 # ⚠ Notes (mostly blender faults)
+- If you let go of the switcher key without first lifting your pen, the release key will never be given to the addon and the switched-mode will stay until you hit the switcher button again.
+  This is because blender suppresses the release notification to the addon while the drawing key is held down. There's nothing I can do to fix it right now.
+  If I had added another operator to act like gpencil.draw, it would either always require a pen press to start drawing or never end because gpencil.draw() when cast from an addon never ends if "wait for input" is off.
+  This actually happens on the normal gpencil.draw too if you have it activated by button instead of by the eraser signal from your drawing tablet (which blender uses even without a keymap because it gets its own special API and I get nothing.)
+
 - Setting the keybind to an 'eraser key' like shown below probably won't work.
 
   ![Blender_Render12-07-2024_11 55 23PM_860x157x](https://github.com/user-attachments/assets/7899484e-99e9-4b84-baab-63e04552bb1b)
