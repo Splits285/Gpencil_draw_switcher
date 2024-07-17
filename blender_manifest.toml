@@ -8,7 +8,7 @@ tagline = "Hotkeys to switch between brushes and/or materials. Useful for using 
 maintainer = "Splits285 <splits285@gmail.com>"
 type = "add-on"
 
-website = "https://blenderartists.org/t/keymesh/"
+website = "https://github.com/Splits285/Gpencil_draw_switcher"
 tags = ["Grease Pencil", "Materials", "Brush", "Eraser"]
 
 blender_version_min = "2.8.0"
