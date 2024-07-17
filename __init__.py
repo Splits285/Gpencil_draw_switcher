@@ -2,7 +2,7 @@ bl_info = {
 "name": "Grease Pencil material-brush bind-toggle-switcher (erase-switcher)",
 "description": "Switch to a material and/or brush while a special gpencil.draw_switcher is held. Ideal for using holdout materials to erase strokes instead of erasing them by their vertices",
 "author": "Splits285",
-"version": (1, 0, 1),
+"version": (1, 0, 2),
 "blender": (2, 8, 0),
 "location": "Preferences > Keymaps > Grease Pencil Paint. Add an entry for gpencil.draw_switcher",
 "warning": "Don\'t use X to clear text fields when changing Switch settings, blender lingers them unless you write exactly nothing, not even a space. Also \'ERASER\' as a key probably won't work well. More explanation on github (Documentation)",
@@ -111,6 +111,11 @@ class GPencilDrawSwitcherOperator(bpy.types.Operator):
     #=================================================================================
 
     def invoke(self, context, event):
+        try:
+            print(bpy.app.driver_namespace['DontLeaveMeHanging'])
+        except KeyError:
+            bpy.app.driver_namespace['DontLeaveMeHanging'] = 0
+ 
         if bpy.app.driver_namespace['DontLeaveMeHanging'] == 0:
             #indent everything in invoke to here.
             #print("===================================================DOING")  
