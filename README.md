@@ -23,10 +23,11 @@ You can also add a TriggerBrush to only trigger the switching if you're on that 
 - If you clear the entry on any field with the X button it may linger and continue switching/acting on trigger as if it was still there. Just manually specify an empty entry (the text box won't be grayed out if you did this right) and that should fix it. You can X it again after if you really want to, it stays fixed after one attempt.
 
    ![image](https://github.com/user-attachments/assets/b340d50a-f74a-4ffb-9b0d-50e193c1e665) Look for INK Pen. (Case-sensitive)
-   ![image](https://github.com/user-attachments/assets/b1c583a3-699d-40f8-9d2e-81e268ac3b7e) Still looking for it, because X was used to clear it. Blender moment.
+   ![image](https://github.com/user-attachments/assets/b1c583a3-699d-40f8-9d2e-81e268ac3b7e) Still looking for it, because X was used to clear it.
    ![image](https://github.com/user-attachments/assets/aeb1d16d-0d87-42b2-836e-c78e545d7971) Looking for " ". Not good enough.
    ![image](https://github.com/user-attachments/assets/8be09ee7-c562-485d-80d4-b4f42330f3b9) Won't do any switching, truly empty. The default. Finally.
 
+   Blender moment.
 
 # Installation
 Install by going to Preferences > Addons > Install. Install the .zip file directly, you can't install it extracted.
