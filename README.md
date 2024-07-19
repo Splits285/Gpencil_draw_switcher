@@ -18,7 +18,7 @@ You can also add a TriggerBrush to only trigger the switching if you're on that 
   The addon listens for any key type and state, so if you can't set the eraser keybind with a physical press, you should probably bind the eraser button on your pen to something different, like a mouse button or key press.
 
   I use F13 to not absorb limited free key space (F13 is indeed a real thing, they go up to 25 I think.)
-  For some reason this isn't a typical key for blender, or at least my wacom tablet doesn't send it as such, and I've never been able to set it by actually pressing an eraser. I always have to select it in keymaps' mouse dropdown menu. I'm on windows, so I don't know if it would be any different on other OSes.
+  For some Eraser isn't a typical key for blender, or at least my wacom tablet doesn't send it as such, and I've never been able to set it by actually pressing an eraser. Using a python key testing script I can't even seem to get it to detect the 'key' at all. I always have to select it in keymaps' mouse dropdown menu. I'm on windows, so I don't know if it would be any different on other OSes.
   Good luck if your pen driver/software doesn't have per-app keybindings. I'm sorry.
   
 ****
