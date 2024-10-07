@@ -1,3 +1,5 @@
+# Note, this addon has ceased development since the new grease pencil may come around soon and this is too hard for me to make right now.
+
 # Features
 ![Blender_Render16-07-2024_06 49 40AM_1384x279x](https://github.com/user-attachments/assets/71c71687-2ea3-4c54-8df1-9b26de5f9d9a)
 Once you've set a binding for gpencil.draw_switcher, you can hold it (or press once and release if you enable 'toggle') whenever you're using your standard gpencil.draw bind to switch to whatever brush/material you'd like.
